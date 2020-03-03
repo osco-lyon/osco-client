@@ -1,0 +1,214 @@
+/*
+ * Authors : Thomas Andre, Victor Bonnin, Pierre Niogret, Bénédicte Thomas
+ * Licence: GPLv3 or later
+ */
+
+#map {
+  text-align: justify;
+  width: 100%;
+  padding-left: 5%;
+  height: 100vh;
+}
+
+h1 {
+  text-align: center;
+  color: grey;
+}
+
+.button {
+  background: #e2001a;
+  border-radius: 10px;
+  color: #fff;
+  cursor: pointer;
+  font-weight: 580;
+  margin: 20px;
+  margin-top: 180px;
+  margin-right: 60px;
+  margin-bottom: 60px;
+  margin-left: 60px;
+  padding: 8px;
+  text-align: center;
+  width: 200px;
+  z-index: 9999;
+  position: absolute;
+}
+.board.large {
+  width: 50px;
+}
+.board {
+  background: #f1f5f5;
+  border-radius: 10px;
+  box-shadow: 0 6px 35px 0 rgba(0, 0, 0, 0.15);
+  display: flex;
+  flex-direction: column;
+  margin: 20px;
+  margin-top: 60px;
+  margin-right: 60px;
+  margin-bottom: 60px;
+  margin-left: 60px;
+  width: 200px;
+  z-index: 9999;
+  position: absolute;
+}
+.btn-primary {
+  border-radius: 10px;
+  margin-top: -1200px;
+  margin-right: 60px;
+  margin-bottom: 80px;
+  margin-left: 1360px;
+  position: relative;
+}
+.modal-body {
+  text-align: justify;
+  font-weight: normal;
+}
+
+img {
+  vertical-align: middle;
+  padding-top: 0.5px;
+}
+.easy-button-button .button-state {
+  display: block;
+  width: 100%;
+  height: 100%;
+  position: relative;
+}
+.leaflet-touch .leaflet-bar button {
+  width: 30px;
+  height: 30px;
+  line-height: 30px;
+}
+.board.large {
+  width: 200px;
+}
+.inputs {
+  border: none;
+  border-radius: 5px;
+  flex: 1 1;
+  font-size: 0.875em;
+  margin: 5px 0;
+  outline: none;
+  padding: 10px 20px;
+  color: #58585a;
+}
+button,
+input,
+select,
+textarea {
+  font-family: inherit;
+  font-size: inherit;
+  line-height: inherit;
+  /* margin-top: 20px; */
+  /* margin-right: 20px; */
+  /* margin-bottom: 20px; */
+  /* margin-left: 20px; */
+}
+
+div.leaflet-bar.easy-button-container.leaflet-control {
+  z-index: -1;
+  border: none;
+}
+
+div.leaflet-control-geocoder.leaflet-bar.leaflet-control-geocoder-expanded.leaflet-control.leaflet-control-geocoder-options-open {
+  z-index: 900;
+}
+
+div.dropdown.open.show {
+  z-index: 10000;
+}
+
+@media only screen and (max-width: 480px) {
+  .leaflet-touch .leaflet-control-geocoder,
+  .leaflet-control-geocoder-form input {
+    font-size: 80%;
+  }
+}
+
+.dropdown,
+.dropup {
+  position: absolute;
+  margin-top: 170px;
+  margin-left: 10px;
+}
+
+div.slider1 {
+  position: absolute;
+  margin-top: 220px;
+}
+
+div.slider2 {
+  position: absolute;
+  margin-top: 270px;
+}
+
+div.slider3 {
+  position: absolute;
+  margin-top: 320px;
+}
+
+/* div.slider4 { */
+/* position: absolute;  */
+/* margin-top: 370px; */
+/* } */
+
+#Slider1 .slider-selection {
+  background: #bababa;
+}
+
+#Slider2 .slider-selection {
+  background: #bababa;
+}
+
+#Slider3 .slider-selection {
+  background: #bababa;
+}
+
+/* #Slider4 .slider-selection { */
+/* background: #BABABA; */
+/* } */
+
+#BGDep .leaflet-control-geocoder-icon {
+  background-image: url(img/green_flag.png);
+}
+
+#BGArr .leaflet-control-geocoder-icon {
+  background-image: url(img/red_flag.png);
+}
+
+#aide_revetement_paragraphe .leaflet-touch .leaflet-bar button {
+  background-color: inherit;
+}
+
+#aide_amenagement_paragraphe
+  button.easy-button-button.leaflet-bar-part.leaflet-interactive.unnamed-state-active {
+  background-image: inherit;
+}
+
+#aide_vitesse_paragraphe .leaflet-touch .leaflet-bar button {
+  background-image: transparent;
+}
+
+.legend {
+  line-height: 18px;
+  color: #555;
+  background-color: white;
+  padding: 10px;
+  border-radius: 10px;
+  box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+}
+
+.legend i {
+  width: 18px;
+  height: 18px;
+  float: right;
+  margin-left: 8px;
+  margin-right: 8px;
+}
+
+#sidebar {
+  text-align: center;
+}
+
+.leaflet-sidebar {
+  height: 110%;
+}

@@ -1,0 +1,382 @@
+<!--
+  Authors : Thomas André, Victor Bonnin, Jérémy Kalsron, Pierre Niogret, Bénédicte Thomas
+  License : GPLv3 or later
+-->
+
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width" />
+  <script src="lib/leaflet/leaflet.js"></script>
+  <script src="lib/leaflet/extension/button.js"></script>
+  <script src="lib/jquery.js"></script>
+  <script src="lib/bootstrap/bootstrap.min.js"></script>
+  <script src="lib/bootstrap/extension/bootstrap-slider.min.js"></script>
+  <script src="lib/leaflet/extension/Control.Geocoder.min.js"></script>
+  <script src="lib/cheet.min.js"></script>
+  <link rel="stylesheet" type="text/css" href="lib/leaflet/leaflet.css" />
+  <link rel="stylesheet" href="lib/leaflet/extension/button.css" />
+  <link rel="stylesheet" href="lib/bootstrap/bootstrap.min.css" />
+  <link rel="stylesheet" href="lib/bootstrap/extension/css/bootstrap-slider.min.css" />
+  <link rel="stylesheet" href="lib/leaflet/extension/Control.Geocoder.css" />
+  <link rel="stylesheet" href="lib/leaflet/extension/sidebar.css" />
+  <link rel="stylesheet" type="text/css" href="index.css" />
+  <title>OSCO - OSCO Sécurise et Contribue à OSM</title>
+</head>
+
+<body>
+  <div>
+    <div id="map"></div>
+    <div id="sidebar">
+      <h1 id="T_iti">
+        <img src="img/itineraire.png" alt="Itineraire" class="center-block" style="width: 100%" />
+      </h1>
+      <h1 id="T_res">
+        <img src="img/resultat_itineraire.png" alt="Résultat" class="center-block" style="width: 100%" />
+      </h1>
+      <h1 id="T_osm">Contribution</h1>
+      <p id="resnote" style="font-size: medium;">
+        <br />Note pour l'itinéraire <b id="type_itineraire"></b> :
+      </p>
+      <img id="imgnote" alt="Note" class="center-block" style="width: 40%" />
+      <p class="center-block" id="reslen">
+        <br />Distance du trajet :<br /><b id="reslenX"></b>
+      </p>
+      <p class="center-block" id="restime">
+        <br />Temps de trajet estimé :<br /><b id="restimeX"></b>
+      </p>
+      <p class="center-block" id="losm">
+        <br />Vous pouvez améliorer la suggestion d'itinéraires en contribuant
+        à OpenStreetMap à l'aide de
+        <a href="contribution.html">notre outil dédié 🖊️</a>.
+      </p>
+      <!--
+					<p id="Legende" style="text-align: center;"></p> -->
+      <!-- <button id="test">Test bouton</button> -->
+      <div class="itineraire">
+        <p id="BGDep"></p>
+        <p id="BGArr"></p>
+        <p id="BCP"></p>
+        <p id="BRI"></p>
+        <p id="aide_revetement_paragraphe"></p>
+        <p id="aide_amenagement_paragraphe"></p>
+        <p id="aide_vitesse_paragraphe"></p>
+      </div>
+      <div class="dropdown">
+        <button class="btn btn-default dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown"
+          aria-haspopup="true" aria-expanded="false">
+          Options
+          <span class="caret"></span>
+        </button>
+        <ul class="dropdown-menu type-itineraire" aria-labelledby="dropdownMenu1">
+          <li id="TYPEsecurise">
+            <a href="#">Trajet recommandé OSCO 👷‍</a>
+          </li>
+          <li id="TYPEcourt"><a href="#">Trajet le plus court ⚡</a></li>
+          <li id="TYPEamenage"><a href="#">Trajet le plus aménagé 🚴‍</a></li>
+          <li role="separator" class="divider"></li>
+          <li id="personnalisation">
+            <a href="#">Personnaliser mon trajet ✏</a>
+          </li>
+        </ul>
+      </div>
+      <!-- Sliders pour les critères -->
+      <div class="slider1" id="slider1">
+        <label class="slider-label" for="SL1">Qualité du revêtement</label>
+        <p>
+          <input id="SL1" data-slider-id="Slider1" type="text" data-slider-min="1" data-slider-max="5"
+            data-slider-step="1" data-slider-value="50" /><br />
+        </p>
+      </div>
+      <div class="slider2" id="slider2">
+        <label class="slider-label" for="SL2">Aménagements cyclables</label>
+        <p>
+          <input id="SL2" data-slider-id="Slider2" type="text" data-slider-min="1" data-slider-max="5"
+            data-slider-step="1" data-slider-value="50" /><br />
+        </p>
+      </div>
+      <div class="slider3" id="slider3">
+        <label class="slider-label" for="SL3">Vitesse autorisée de la voie</label>
+        <p>
+          <input id="SL3" data-slider-id="Slider3" type="text" data-slider-min="1" data-slider-max="5"
+            data-slider-step="1" data-slider-value="50" /><br />
+        </p>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal fade" id="message" role="dialog" data-backdrop="static" data-keyboard="false">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header" id="message_header"></div>
+        <div class="modal-body">
+          <p id="message_content" style="text-align: center;"></p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal -->
+  <!-- Modal -->
+  <div class="modal fade" id="myModal" role="dialog">
+    <div class="modal-dialog">
+      <!-- Modal content-->
+      <div class="modal-content">
+        <div class="modal-header">
+          <a href="https://github.com/osco-lyon"><img style="position: absolute; top: 0; left: 0; border: 0;"
+              src="https://s3.amazonaws.com/github/ribbons/forkme_left_white_ffffff.png" alt="Fork me on GitHub" /></a>
+          <h4 class="modal-title" style="text-align: center">
+            OSCO : <strong>O</strong>SCO <strong>S</strong>écurise et
+            <strong>C</strong>ontribue à <strong>O</strong>SM
+          </h4>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+          <img src="img/logo_osco.png" alt="Ca va pédaler !" class="center-block" style="width: 180px" />
+        </div>
+        <div class="modal-body">
+          <p>
+            OSCO est une application participative qui propose de vous
+            déplacer en toute sécurité, au sein de la Métropole de Lyon. Vous
+            pouvez désormais connaitre le degré de dangerosité de votre
+            itinéraire. Vous préférez rouler sur des voies réservées aux
+            cyclistes ? Indiquez le grâce à l'option de
+            <strong>personnalisation d'itinéraire !!!</strong>
+          </p>
+
+          <p>
+            Par ailleurs, cette application se veut
+            <strong>collaborative</strong>. Avec
+            <a href="https://www.openstreetmap.org/user/new">OpenStreetMap</a>
+            participez à l'enrichissement de l'application. «
+            <a href="http://next.openstreetmap.fr/contribuer/">Vous pouvez vous aussi contribuer</a>
+            : nous vous faisons confiance pour améliorer la carte »
+            (OpenStreetMap).
+          </p>
+
+          <p>
+            Partez serein avec OSCO et son indice de dangerostié basé sur le
+            <strong>type de revêtement</strong>, la présence d'<strong>aménagements cyclables</strong>
+            (pistes et bandes cyclables, voies vertes...), et la
+            <strong>vitesse maximale autorisée sur la chaussée</strong>.
+          </p>
+          <img style="width: 180px" src="img/facteur.gif" alt="Ca va pédaler
+            !" class="center-block" />
+          <p align="right">©La Poste</p>
+          <p>
+            Le code d'OSCO est libre et gratuit. Vous pouvez retrouver
+            l'intégralité du code produit et des procédures d'installation sur
+            le Github du projet. N'hésitez pas à nous contacter pour plus
+            d'informations.
+          </p>
+          <p style="text-align: center;">
+            ✉ <a href="mailto:osco@anatidaepho.be">osco@anatidaepho.be</a>
+          </p>
+          <img style="height: 100%; width: 100%" src="img/RVB_FondBlanc_Original.png" alt="Logos"
+            class="center-block" />
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal Aide Revêtement -->
+  <div class="modal fade" id="myModalAide" role="dialog">
+    <div class="modal-dialog">
+      <!-- Modal content-->
+      <div class="modal-content">
+        <div class="modal-header">
+          <h4 class="modal-title" style="text-align: center">
+            Informations sur la qualité du revêtement
+          </h4>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+          <img src="img/logo_osco.png" alt="Ca va pédaler !" class="center-block" style="width: 200px" />
+        </div>
+        <div class="modal-body">
+          <p>
+            La <strong>qualité du revêtement</strong> correspond aux matériaux
+            qui recouvrent la surface de la voirie. Ceux-ci peuvent être:
+            <li style="margin-left: 20px">De l'asphalte</li>
+            <li style="margin-left: 20px">Du ciment</li>
+            <li style="margin-left: 20px">Des graviers</li>
+            <li style="margin-left: 20px">Des pavés</li>
+          </p>
+          <p>
+            En augmentant la valeur du revêtement, vous considérez qu'il
+            s'agit d'un élément important à prendre en compte pour le calcul
+            de votre itinéraire.
+          </p>
+          <img src="img/revetements.png" alt="Revêtement!" class="center-block" style="width: 500px" />
+        </div>
+        <p style="font-size: 12px; margin-left: 20px">©GrandLyon</p>
+      </div>
+    </div>
+  </div>
+  <!-- Modal Aide Aménagement cyclable -->
+  <div class="modal fade" id="myModalAideAmenagement" role="dialog">
+    <div class="modal-dialog">
+      <!-- Modal content-->
+      <div class="modal-content">
+        <div class="modal-header">
+          <h4 class="modal-title" style="text-align: center">
+            Informations vitesses autorisées sur la voirie
+          </h4>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+          <img src="img/logo_osco.png" alt="Ca va pédaler !" class="center-block" style="width: 200px" />
+        </div>
+        <div class="modal-body">
+          <p>
+            La <strong>vitesse autorisée de la voie</strong> correspond aux
+            limitations de vitesse attribuées sur les tronçons routiers. En
+            augmentant la valeur de la vitesse, vous considérez que la vitesse
+            des voitures est un facteur dangereux lors de vos déplacements.
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal Aide Vitesse -->
+  <div class="modal fade" id="myModalAideVitesse" role="dialog">
+    <div class="modal-dialog">
+      <!-- Modal content-->
+      <div class="modal-content">
+        <div class="modal-header">
+          <h4 class="modal-title" style="text-align: center">
+            Informations aménagements cyclables
+          </h4>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+          <img src="img/logo_osco.png" alt="Ca va pédaler !" class="center-block" style="width: 200px" />
+        </div>
+        <div class="modal-body">
+          <p>
+            Les <strong>aménagements cyclables</strong> correspondent aux
+            dispositifs dédiés uniquement à la cicrulation des modes doux. Les
+            aménagements cyclables peuvent être de type :
+            <li style="margin-left: 20px">
+              Bande cyclable dans le sens des voitures
+            </li>
+            <li style="margin-left: 20px">
+              Bande cyclable à contre sens des voitures
+            </li>
+            <li style="margin-left: 20px">
+              Couloir partagé Bus - Bande cyclable
+            </li>
+            <li style="margin-left: 20px">Piste cyclable</li>
+            <li style="margin-left: 20px">Voie verte</li>
+          </p>
+          <p>
+            En augmentant la valeur affectée aux aménagements cyclables, vous
+            souhaitez que votre itinéraire vous propose au maximum d'emprunter
+            des voiries dédiées à la ciruclation des modes doux.
+          </p>
+          <img src="img/amenagement.png" alt="Aménagements!" class="center-block" style="width: 500px" />
+        </div>
+        <p style="font-size: 12px; margin-left: 20px">©GrandLyon</p>
+      </div>
+    </div>
+  </div>
+</body>
+
+<script src="lib/leaflet/extension/sidebar.js"></script>
+<script src="index.js"></script>
+
+<script>
+  $(document).ready(function () {
+    // Show the Modal on load
+    $("#myModal").modal("show");
+    $("#myModal").trigger("focus");
+    $("#slider1").hide();
+    $("#slider2").hide();
+    $("#slider3").hide();
+    $("#slider4").hide();
+    $("#BRI").hide();
+    $("#T_res").hide();
+    $("#T_osm").hide();
+    $("#resnote").hide();
+    $("#reslen").hide();
+    $("#reslenX").hide();
+    $("#restime").hide();
+    $("#restimeX").hide();
+    $("#losm").hide();
+    $("#imgnote").hide();
+    $("#Legende").hide();
+    $("#aide_revetement_paragraphe").hide();
+    $("#aide_vitesse_paragraphe").hide();
+    $("#aide_amenagement_paragraphe").hide();
+
+    // Hide the Modal
+    $("#myBtn").click(function () {
+      $("#myModal").modal("hide");
+    });
+
+    $("#personnalisation").click(function () {
+      $("#slider1").show();
+    });
+    $("#personnalisation").click(function () {
+      $("#slider2").show();
+    });
+    $("#personnalisation").click(function () {
+      $("#slider3").show();
+    });
+    $("#personnalisation").click(function () {
+      $("#slider4").show();
+    });
+    $("#personnalisation").click(function () {
+      $("#aide_revetement_paragraphe").show();
+    });
+
+    $("#personnalisation").click(function () {
+      $("#aide_vitesse_paragraphe").show();
+    });
+
+    $("#personnalisation").click(function () {
+      $("#aide_amenagement_paragraphe").show();
+    });
+
+    $(".dropdown-toggle").dropdown();
+
+    $(".dropdown-menu a").click(function () {
+      $(this)
+        .closest(".dropdown-menu")
+        .prev()
+        .dropdown("toggle");
+    });
+
+    $("#TYPEsecurise").click(function () {
+      $("#slider1").hide();
+      $("#slider2").hide();
+      $("#slider3").hide();
+      $("#aide_revetement_paragraphe").hide();
+      $("#aide_vitesse_paragraphe").hide();
+      $("#aide_amenagement_paragraphe").hide();
+    });
+
+    $("#TYPEcourt").click(function () {
+      $("#slider1").hide();
+      $("#slider2").hide();
+      $("#slider3").hide();
+      $("#aide_revetement_paragraphe").hide();
+      $("#aide_vitesse_paragraphe").hide();
+      $("#aide_amenagement_paragraphe").hide();
+    });
+
+    $("#TYPEamenage").click(function () {
+      $("#slider1").hide();
+      $("#slider2").hide();
+      $("#slider3").hide();
+      $("#aide_revetement_paragraphe").hide();
+      $("#aide_vitesse_paragraphe").hide();
+      $("#aide_amenagement_paragraphe").hide();
+    });
+  });
+</script>
+
+</html>
