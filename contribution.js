@@ -88,7 +88,7 @@ function commitChanges() {
     if (err) {
       showMessage(
         "❌ Erreur",
-        "Impossible d'impossible d'envoyer les modifications."
+        "Impossible d'envoyer les modifications."
       );
       logout();
       return;
@@ -107,7 +107,7 @@ function commitChanges() {
         if (err) {
           showMessage(
             "❌ Erreur",
-            "Impossible d'impossible d'envoyer les modifications."
+            "Impossible d'envoyer les modifications."
           );
           logout();
           return;
