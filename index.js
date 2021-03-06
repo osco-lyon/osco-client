@@ -8,6 +8,7 @@ var map = L.map("map", { attributionControl: true, zoomControl: false });
 var osmUrl =
   "https://{s}.tile.thunderforest.com/cycle/{z}/{x}/{y}.png?apikey=e66bf088531a49c694116e61095854a1";
 var osmAttrib = "Map data © OpenStreetMap Contributeur";
+var api_url = window.location.origin + "/api"
 
 // Lien vers la légende
 L.tileLayer(osmUrl, {
@@ -302,23 +303,6 @@ var aide_vitesse = L.easyButton(
 aide_vitesse.button.style.marginTop = "-157px";
 aide_vitesse.button.style.marginLeft = "150px";
 
-// EasyButton Contribution OSM
-L.easyButton(
-  '<img src="img/pencil.png" style="width: 20px">',
-  function () {
-    bbox =
-      map.getBounds().getWest() +
-      "," +
-      map.getBounds().getNorth() +
-      "," +
-      map.getBounds().getEast() +
-      "," +
-      map.getBounds().getSouth();
-    location.href = "contribution.html?" + bbox;
-  },
-  { position: "topright" }
-).addTo(map);
-
 var itineraire = L.geoJSON(null, {
   style: function (feature, layer) {
     return style(feature);
@@ -339,13 +323,11 @@ displayPanneau = function () {
   $("#slider4").hide();
   $("#dropdownMenu1").hide();
   $("#T_iti").hide();
-  $("#T_osm").hide();
   $("#T_res").show();
   $("#resnote").show();
   $("#restime").show();
   $("#reslen").show();
   $("#restimeX").show();
-  $("#losm").show();
   $("#reslenX").show();
   $("#imgnote").show();
   $("#Legende").show();
@@ -382,7 +364,7 @@ createItineraire = function () {
   //recours aux coordonnées et critères définis préalablement
 
   if (choix_itineraire == "personnalisation") {
-    url = "https://osco.anatidaepho.be/api/perso";
+    url = api_url+"/perso";
     document.getElementById("type_itineraire").innerHTML = "personnalisé";
     dataAPI =
       'json=[{"critere":{"surface":' +
@@ -401,7 +383,7 @@ createItineraire = function () {
       yarr +
       "}]}]";
   } else if (choix_itineraire == "TYPEcourt") {
-    url = "https://osco.anatidaepho.be/api/rapide";
+    url = api_url+"/rapide";
     document.getElementById("type_itineraire").innerHTML = "rapide";
     dataAPI =
       'json=[{"geometry":[{"x":' +
@@ -414,7 +396,7 @@ createItineraire = function () {
       yarr +
       "}]}]";
   } else if (choix_itineraire == "TYPEamenage") {
-    url = "https://osco.anatidaepho.be/api/amenagement";
+    url = api_url+"/amenagement";
     document.getElementById("type_itineraire").innerHTML = "aménagé";
     dataAPI =
       'json=[{"geometry":[{"x":' +
@@ -427,7 +409,7 @@ createItineraire = function () {
       yarr +
       "}]}]";
   } else {
-    url = "https://osco.anatidaepho.be/api/recommande";
+    url = api_url+"/recommande";
     document.getElementById("type_itineraire").innerHTML = "recommandé";
     dataAPI =
       'json=[{"geometry":[{"x":' +
@@ -581,13 +563,11 @@ var configInit = L.easyButton(
     $("#BRI").hide();
     $("#T_iti").show();
     $("#T_res").hide();
-    $("#T_osm").hide();
     $("#resnote").hide();
     $("#reslen").hide();
     $("#reslenX").hide();
     $("#restime").hide();
     $("#restimeX").hide();
-    $("#losm").hide();
     $("#imgnote").hide();
     $("#Legende").hide();
     itineraire.clearLayers();
